@@ -5,7 +5,6 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-compat.url = "github:edolstra/flake-compat";
     crane.url = "github:ipetkov/crane";
-    nix-systems.url = "github:nix-systems/default-linux";
   };
 
   outputs =
@@ -13,13 +12,15 @@
       self,
       nixpkgs,
       crane,
-      nix-systems,
       ...
     }:
     let
       forAllSystems =
         function:
-        nixpkgs.lib.genAttrs (import nix-systems) (system: function nixpkgs.legacyPackages.${system});
+        nixpkgs.lib.genAttrs ([
+          "aarch64-linux"
+          "x86_64-linux"
+        ]) (system: function nixpkgs.legacyPackages.${system});
     in
     {
       # Devshell
@@ -74,6 +75,8 @@
 
   nixConfig = {
     extra-substituters = [ "https://jakestanger.cachix.org" ];
-    extra-trusted-public-keys = [ "jakestanger.cachix.org-1:VWJE7AWNe5/KOEvCQRxoE8UsI2Xs2nHULJ7TEjYm7mM=" ];
+    extra-trusted-public-keys = [
+      "jakestanger.cachix.org-1:VWJE7AWNe5/KOEvCQRxoE8UsI2Xs2nHULJ7TEjYm7mM="
+    ];
   };
 }
